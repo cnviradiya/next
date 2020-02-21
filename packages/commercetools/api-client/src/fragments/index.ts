@@ -139,10 +139,12 @@ export const OrderFragment = `
     }
     totalPrice {
       centAmount
+      currencyCode
     }
     orderState
     id
     version
+    createdAt
   }
 `;
 

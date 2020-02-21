@@ -1,11 +1,11 @@
 <template>
-  <SfTabs :open-tab='1'>
+  <SfTabs :open-tab="1">
     <SfTab title="My orders">
       <p class="message">
         Check the details and status of your orders in the online store. You can
         also cancel your order or request a return.
       </p>
-      <div v-if="orders.length === 0" class="no-orders">
+      <div v-if="ordersList.length === 0" class="no-orders">
         <p class="no-orders__title">You currently have no orders</p>
         <p class="no-orders__content">Best get shopping pronto...</p>
         <SfButton class="no-orders__button">Start shopping</SfButton>
@@ -15,25 +15,16 @@
           <SfTableHeader
             v-for="tableHeader in tableHeaders"
             :key="tableHeader"
-            >{{ tableHeader }}</SfTableHeader
-          >
+            >{{ tableHeader }}</SfTableHeader>
           <SfTableHeader>
             <span class="mobile-only">Download</span>
-            <SfButton class="desktop-only orders__download-all"
-              >Download all</SfButton
-            >
+            <SfButton class="desktop-only orders__download-all">Download all</SfButton>
           </SfTableHeader>
         </SfTableHeading>
-        <SfTableRow v-for='order in orders' :key='order[0]'>
-          <SfTableData v-for='(data, key) in order' :key='key'>
-            <template v-if='key === 4'>
-              <span
-                :class="{
-                  'text-success': data === 'Finalised',
-                  'text-warning': data === 'In process'
-                }"
-                >{{ data }}</span
-              >
+        <SfTableRow v-for="order in ordersList" :key="order[0]">
+          <SfTableData v-for="(data, key) in order" :key="key">
+            <template v-if="key == 3">
+              <span :class="{ 'text-success': data === 'Complete', 'text-warning': data === 'Open' }">{{ data }}</span>
             </template>
             <template v-else>{{ data }}</template>
           </SfTableData>
@@ -47,16 +38,23 @@
     <SfTab title="Returns">
       <p class="message">
         This feature is not implemented yet! Please take a look at<br />
-        <a href="#"
-          >https://github.com/DivanteLtd/vue-storefront/issues for our
-          Roadmap!</a
-        >
+        <a href="#">https://github.com/DivanteLtd/vue-storefront/issues for our Roadmap!</a>
       </p>
     </SfTab>
   </SfTabs>
 </template>
+
 <script>
+import { computed } from '@vue/composition-api';
 import { SfTabs, SfTable, SfButton } from '@storefront-ui/vue';
+import { useUser } from '<%= options.composables %>';
+import {
+  getOrderDate,
+  getOrderNumber,
+  getOrderTotalGross,
+  getOrderStatus
+} from '<%= options.helpers %>';
+
 export default {
   name: 'PersonalDetails',
   components: {
@@ -64,30 +62,30 @@ export default {
     SfTable,
     SfButton
   },
-  props: {
-    account: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  data() {
+  setup() {
+    const { orders } = useUser();
+
+    const tableHeaders = [
+      'Order ID',
+      'Payment date',
+      'Amount',
+      'Status'
+    ];
+    const ordersList = computed(() => orders.value ? orders.value.map((order) => [
+      getOrderNumber(order),
+      getOrderDate(order),
+      getOrderTotalGross(order),
+      getOrderStatus(order)
+    ]) : []);
+
     return {
-      tableHeaders: [
-        'Order ID',
-        'Payment date',
-        'Payment method',
-        'Amount',
-        'Status'
-      ]
+      tableHeaders,
+      ordersList
     };
-  },
-  computed: {
-    orders() {
-      return this.account.orders;
-    }
   }
 };
 </script>
+
 <style lang='scss' scoped>
 @import '~@storefront-ui/vue/styles';
 @mixin for-mobile {
