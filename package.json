@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "engines": {
-    "node": "10.x"
+    "node": "11.x"
   },
   "scripts": {
     "build:docs": "cd packages/core/docs && yarn build",
@@ -74,7 +74,8 @@
       "packages/boilerplate/*",
       "packages/core/*",
       "packages/prismic",
-      "packages/about-you/*"
+      "packages/about-you/*",
+      "packages/shopify/*"
     ],
     "nohoist": [
       "**/**/**"
