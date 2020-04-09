@@ -1,48 +1,24 @@
-import ApolloClient from 'apollo-client';
-import getCollection from './api/getCollection';
-import { SetupConfig, ApiConfig, Token } from './types/setup';
+import getCollections from './api/getCollections';
+import { apiClientFactory } from '@vue-storefront/factories';
+import Client from 'shopify-buy';
 
-let apolloClient: ApolloClient<any> = null;
-let locale = 'en';
-let currency = '';
-let country = '';
-let countries = [];
-let currencies = [];
-let locales = [];
-let currentToken: Token = null;
-let api: ApiConfig = null;
-
-const setup = <TCacheShape>(setupConfig: SetupConfig<TCacheShape>): ApolloClient<TCacheShape> => {
-  api = setupConfig.api || api;
-  locale = setupConfig.locale || locale;
-  currency = setupConfig.currency || currency;
-  country = setupConfig.country || country;
-  countries = setupConfig.countries || countries;
-  currencies = setupConfig.currencies || currencies;
-  locales = setupConfig.locales || locales;
-  currentToken = setupConfig.currentToken || currentToken;
-
-  if (setupConfig.api) {
-    // apolloClient = new ApolloClient({
-    //   link: createCommerceToolsLink(),
-    //   cache: new InMemoryCache(),
-    //   ...setupConfig.customOptions
-    // });
-  }
-
-  return apolloClient;
+let client;
+const defaultConfiguration = {
+  domain: 'testimonial-aula.myshopify.com',
+  storefrontAccessToken: '29d77b8cb02a1b019fb50e57c7249936'
 };
 
+function onSetup(config) {
+  client = Client.buildClient(config);
+}
+
+const { setup, update, override, settings } = apiClientFactory<any, any>(defaultConfiguration, onSetup);
+
 export {
-  api,
-  currentToken,
-  apolloClient,
+  getCollections,
+  override,
   setup,
-  locale,
-  locales,
-  country,
-  currency,
-  countries,
-  currencies,
-  getCollection
+  update,
+  settings,
+  client as _shopifyClient
 };
