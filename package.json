@@ -38,7 +38,8 @@
     "dev:ct": "cd packages/commercetools/theme && yarn dev",
     "dev:bp": "cd packages/boilerplate/theme && yarn dev",
     "lint": "eslint . --ext .js,.ts,.vue",
-    "build:sp:api-client": "cd packages/shopify/api-client && yarn build"
+    "build:sp:api-client": "cd packages/shopify/api-client && yarn build",
+    "dev:sp:api-client": "cd packages/shopify/api-client && yarn dev"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",

@@ -1,24 +1,24 @@
-import getCollections from './api/getCollections';
+import getCollection from './api/getCollections';
 import { apiClientFactory } from '@vue-storefront/factories';
 import Client from 'shopify-buy';
 
 let client;
-const defaultConfiguration = {
-  domain: 'testimonial-aula.myshopify.com',
-  storefrontAccessToken: '29d77b8cb02a1b019fb50e57c7249936'
+const defaultSettings = {
+  domain: 'lauridukaan.myshopify.com',
+  storefrontAccessToken: '1daf49e906c0433bae0335731776facf'
 };
 
 function onSetup(config) {
   client = Client.buildClient(config);
 }
-
-const { setup, update, override, settings } = apiClientFactory<any, any>(defaultConfiguration, onSetup);
+const { setup, update, override, getSettings } = apiClientFactory<any, any>({ defaultSettings, onSetup });
+console.log('inside the shopify-index.ts', getCollection);
 
 export {
-  getCollections,
+  getCollection,
   override,
   setup,
   update,
-  settings,
+  getSettings as settings,
   client as _shopifyClient
 };

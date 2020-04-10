@@ -16,6 +16,7 @@
     "strict": false,
     "preserveSymlinks": true,
     "paths": {
+      "@vue-storefront/factories": ["core/factories"],
       "@vue-storefront/interfaces": ["core/interfaces/src"],
       "@vue-storefront/utils": ["core/utils/src"]
     },
