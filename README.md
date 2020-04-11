@@ -59,3 +59,11 @@ yarn build:sp:api-client
 ```sh
 yarn dev:sp:api-client
 ```
+**Build full package:**
+```sh
+yarn build:sp:tools
+```
+**Start app in development mode:**
+```sh
+yarn dev:sp
+```

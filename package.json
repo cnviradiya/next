@@ -39,7 +39,10 @@
     "dev:bp": "cd packages/boilerplate/theme && yarn dev",
     "lint": "eslint . --ext .js,.ts,.vue",
     "build:sp:api-client": "cd packages/shopify/api-client && yarn build",
-    "dev:sp:api-client": "cd packages/shopify/api-client && yarn dev"
+    "build:sp:composables": "cd packages/shopify/composables && yarn build",
+    "build:sp:tools": "yarn build:core && yarn build:sp:api-client && yarn build:sp:composables",
+    "dev:sp:api-client": "cd packages/shopify/api-client && yarn dev",
+    "dev:sp": "cd packages/shopify/theme && yarn dev"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
