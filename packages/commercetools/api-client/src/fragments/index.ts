@@ -1,4 +1,29 @@
 
+export const ProductPriceFragment = `
+  fragment DefaultProductPrice on ProductPrice {
+    discounted {
+      value {
+        type
+        currencyCode
+        centAmount
+        fractionDigits
+      }
+      discount {
+        validFrom
+        validUntil
+        isActive
+        name(locale: $locale)
+      }
+    }
+    value {
+      type
+      currencyCode
+      centAmount
+      fractionDigits
+    }
+  }
+`;
+
 export const AddressFragment = `
   fragment DefaultAddress on Address {
     title
@@ -11,6 +36,11 @@ export const AddressFragment = `
     region
     country
     company
+    state
+    contactInfo {
+      phone
+      email
+    }
   }
 `;
 
@@ -24,15 +54,50 @@ export const CustomerFragment = `
 `;
 
 export const LineItemFragment = `
+  ${ProductPriceFragment}
+
   fragment DefaultLineItem on LineItem {
     id
     productId
     name(locale: $locale)
     productSlug(locale: $locale)
     quantity
+    discountedPricePerQuantity {
+      quantity
+      discountedPrice {
+        value {
+          centAmount
+        }
+        includedDiscounts {
+          discount {
+            name(locale: $locale)
+            isActive
+          }
+        }
+      }
+    }
     variant {
       id
       sku
+      price(currency: "USD") {
+        tiers {
+          value {
+            centAmount
+          }
+        }
+        value {
+          centAmount
+        }
+        discounted {
+          value {
+            centAmount
+          }
+          discount {
+            isActive
+            name(locale: $locale)
+          }
+        }
+      }
       images {
         url
         label
@@ -79,8 +144,27 @@ export const LineItemFragment = `
       }
     }
     price {
-      value {
-        centAmount
+      ...DefaultProductPrice
+    }
+  }
+`;
+
+export const ShippingMethodFragment = `
+  fragment DefaultShippingMethod on ShippingMethod {
+    id
+    version
+    name
+    description
+    isDefault
+    localizedDescription(locale: $locale)
+    zoneRates {
+      zone {
+        name
+      }
+      shippingRates {
+        price {
+          centAmount
+        }
       }
     }
   }
@@ -90,6 +174,7 @@ export const CartFragment = `
   ${AddressFragment}
   ${CustomerFragment}
   ${LineItemFragment}
+  ${ShippingMethodFragment}
 
   fragment DefaultCart on Cart {
     id
@@ -121,10 +206,34 @@ export const CartFragment = `
         centAmount
       }
     }
+    paymentInfo {
+      payments {
+        id
+      }
+    }
     shippingInfo {
       price {
         centAmount
       }
+      shippingMethod {
+        ...DefaultShippingMethod
+      }
+    }
+    discountCodes {
+      discountCode {
+        id
+        code
+        isActive
+        validFrom
+        validUntil
+        name(locale: $locale)
+      }
+    }
+    refusedGifts {
+      isActive
+      validFrom
+      validUntil
+      name(locale: $locale)
     }
     cartState
     version
@@ -148,22 +257,3 @@ export const OrderFragment = `
   }
 `;
 
-export const ShippingMethodFragment = `
-  fragment DefaultShippingMethod on ShippingMethod {
-    id
-    version
-    name
-    description
-    isDefault
-    zoneRates {
-      zone {
-        name
-      }
-      shippingRates {
-        price {
-          centAmount
-        }
-      }
-    }
-  }
-`;

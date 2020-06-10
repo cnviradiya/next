@@ -1,13 +1,14 @@
 <template>
   <SfSection :title-heading="title" class="section">
     <SfLoader :class="{ loading }" :loading="loading">
-      <SfCarousel class="product-carousel">
+      <SfCarousel data-cy="related-products-carousel" class="product-carousel">
         <SfCarouselItem v-for="(product, i) in products" :key="i">
           <SfProductCard
             :title="productGetters.getName(product)"
             :image="productGetters.getCoverImage(product)"
-            :regular-price="productGetters.getPrice(product).regular"
-            :link="`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`"
+            :regular-price="productGetters.getFormattedPrice(productGetters.getPrice(product).regular)"
+            :special-price="productGetters.getFormattedPrice(productGetters.getPrice(product).special)"
+            :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
             class="product-card"
           />
         </SfCarouselItem>

@@ -1,24 +1,47 @@
-import getCollection from './api/getCollections';
-import { apiClientFactory } from '@vue-storefront/factories';
+import getCategory from './api/category';
+import getProduct from './api/product';
+import { getCart, createCart, addToCart, updateProductQty, removeCart } from './api/checkout/cart';
+import getShop from './api/shop';
+import getCustomer from './api/customer';
+import { apiClientFactory } from '@vue-storefront/core';
+import { ApiClientMethods, ApiClientSettings } from './types';
 import Client from 'shopify-buy';
 
-let client;
-const defaultSettings = {
-  domain: 'lauridukaan.myshopify.com',
-  storefrontAccessToken: '1daf49e906c0433bae0335731776facf'
+const CustomClient = require('shopify-buy/index.unoptimized.umd');
+let _shopifyClient;
+let _shopifyCustomClient;
+let cookies = {
+  cartCookieName: 'vsf-cart'
 };
 
-function onSetup(config) {
-  client = Client.buildClient(config);
-}
-const { setup, update, override, getSettings } = apiClientFactory<any, any>({ defaultSettings, onSetup });
-console.log('inside the shopify-index.ts', getCollection);
+const { setup, override, getSettings } = apiClientFactory<ApiClientMethods, ApiClientSettings>({
+  defaultSettings: {
+    domain: 'testimonial-aula.myshopify.com',
+    storefrontAccessToken: '29d77b8cb02a1b019fb50e57c7249936'
+  },
+  onSetup: (config: any) => {
+    _shopifyClient = Client.buildClient(config);
+    _shopifyCustomClient = CustomClient.buildClient(config);
+    cookies = config.cookies || cookies;
+  }
+});
+
+const settings = getSettings();
 
 export {
-  getCollection,
+  cookies,
+  getProduct,
+  getCategory,
+  getCart,
+  createCart,
+  addToCart,
+  updateProductQty,
+  removeCart,
+  getShop,
+  getCustomer,
+  _shopifyClient,
+  _shopifyCustomClient,
   override,
   setup,
-  update,
-  getSettings as settings,
-  client as _shopifyClient
+  settings
 };

@@ -1,6 +1,6 @@
-import SdkAuth from '@commercetools/sdk-auth';
+import SdkAuth, { TokenProvider } from '@commercetools/sdk-auth';
 import { Token, ApiConfig, CustomerCredentials } from '../../types/setup';
-import { api } from './../../index';
+import { api, currentToken } from './../../index';
 
 interface FlowOptions {
   currentToken?: Token;
@@ -19,44 +19,44 @@ const createAuthClient = (config: ApiConfig): SdkAuth =>
     scopes: config.scopes
   });
 
-const anonymousFlow = async (config: ApiConfig): Promise<Token> => {
-  const authClient = createAuthClient(config);
+const getCurrentToken = (options: FlowOptions = {}) => {
+  if (currentToken) {
+    return currentToken;
+  }
 
-  return authClient.anonymousFlow();
+  return options.currentToken;
 };
 
-const customerPasswordFlow = async (config: ApiConfig, credentials: CustomerCredentials): Promise<Token> => {
-  const authClient = createAuthClient(config);
+const isTokenActive = async (sdkAuth: SdkAuth, token: Token) => {
+  const tokenIntrospection = await sdkAuth.introspectToken(token.access_token);
 
-  return authClient.customerPasswordFlow(credentials);
+  return tokenIntrospection.active;
 };
 
-const refreshTokenFlow = async (config: ApiConfig, refreshToken: string): Promise<Token> => {
-  const authClient = createAuthClient(config);
-
-  return authClient.refreshTokenFlow(refreshToken);
-};
-
-const isTokenExpired = (token: Token): boolean => Date.now() > token.expires_at;
-
-const createAccessToken = async (options: FlowOptions = {}): Promise<Token> => {
-  const { currentToken } = options;
+const getTokenFlow = async (sdkAuth: SdkAuth, options: FlowOptions = {}) => {
+  const currentToken = getCurrentToken(options);
 
   if (options.customerCredentials) {
-    return customerPasswordFlow(api, options.customerCredentials);
+    return sdkAuth.customerPasswordFlow(options.customerCredentials);
   }
 
-  if (currentToken && !isTokenExpired(currentToken)) {
-    return Promise.resolve(currentToken);
+  if (currentToken) {
+    const tokenActive = await isTokenActive(sdkAuth, currentToken);
+
+    if (tokenActive) {
+      return Promise.resolve(currentToken);
+    }
   }
 
-  if (!currentToken) {
-    return anonymousFlow(api);
-  }
+  return sdkAuth.anonymousFlow();
+};
 
-  if (isTokenExpired(currentToken)) {
-    return refreshTokenFlow(api, currentToken.refresh_token);
-  }
+const createAccessToken = async (options: FlowOptions = {}): Promise<Token> => {
+  const sdkAuth = createAuthClient(api);
+  const tokenInfo = await getTokenFlow(sdkAuth, options);
+  const tokenProvider = new TokenProvider({ sdkAuth }, tokenInfo);
+
+  return tokenProvider.getTokenInfo();
 };
 
 export default createAccessToken;

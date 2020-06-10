@@ -1,9 +1,7 @@
-import { useProductFactory } from '@vue-storefront/factories';
-import { mapProductSearch } from '../../helpers';
-import { UseProduct, BapiProduct } from '../../types';
+import {AgnosticSortByOption, UseProduct, useProductFactory} from '@vue-storefront/core';
+import { BapiProduct, Filter } from '../../types';
+import { params } from './factoryParams';
 
-const useProduct: (cacheId: string) => UseProduct<BapiProduct> = useProductFactory<BapiProduct, any>({
-  productsSearch: mapProductSearch
-});
+const useProduct: (cacheId: string) => UseProduct<BapiProduct, Record<string, Filter>, AgnosticSortByOption[]> = useProductFactory<BapiProduct, any, Record<string, Filter>, AgnosticSortByOption[]>(params);
 
 export default useProduct;

@@ -3,19 +3,24 @@ import {
   getProductSlug,
   getProductPrice,
   getProductGallery,
+  getProductCoverImage,
   getProductFiltered,
   getProductAttributes,
   getProductCategoryIds,
   getProductId
 } from './../../src/getters/productGetters';
+import * as utils from './../../src/getters/_utils';
+
+jest.spyOn(utils, 'createPrice').mockImplementation((product) => ({
+  special: product?.price,
+  regular: product?.price
+} as any));
 
 const product = {
   _name: 'variant 1',
   _slug: 'variant-1',
   _id: 1234,
-  price: {
-    value: { centAmount: 1200 }
-  },
+  price: 12,
   attributeList: [
     {
       name: 'articleNumberManufacturer',
@@ -34,7 +39,6 @@ describe('[commercetools-getters] product getters', () => {
   it('returns default values', () => {
     expect(getProductName(null)).toBe('');
     expect(getProductSlug(null)).toBe('');
-    expect(getProductPrice(null)).toEqual({ regular: null, special: null });
     expect(getProductGallery(null)).toEqual([]);
     expect(getProductFiltered(null)).toEqual([]);
   });
@@ -64,6 +68,11 @@ describe('[commercetools-getters] product getters', () => {
         normal: 'imageV12/url.jpg'
       }
     ]);
+  });
+
+  it('returns cover image', () => {
+    expect(getProductCoverImage({ images: [] } as any)).toEqual(null);
+    expect(getProductCoverImage(product)).toEqual('imageV11/url.jpg');
   });
 
   it('returns master variant', () => {

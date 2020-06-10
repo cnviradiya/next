@@ -6,27 +6,16 @@
   "module": "lib/index.es.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && rollup -c",
+    "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "cross-env APP_ENV=test jest --rootDir ."
+    "test": "jest"
   },
   "dependencies": {
-    "@vue-storefront/factories": "^0.0.1",
-    "apollo-cache-inmemory": "^1.6.3",
-    "apollo-client": "^2.6.4",
-    "apollo-link": "^1.2.13",
-    "apollo-link-context": "^1.0.19",
-    "apollo-link-http": "^1.5.16",
-    "graphql": "^14.5.8",
-    "graphql-tag": "^2.10.1",
-    "isomorphic-fetch": "^2.2.1",
+    "@types/node-fetch": "^2.5.7",
+    "@types/shopify-buy": "^1.11.1",
+    "@vue-storefront/core": "2.0.1-prealpha.300",
+    "node-fetch": "^2.6.0",
     "shopify-buy": "^2.9.3"
-  },
-  "devDependencies": {
-    "apollo-link-schema": "^1.2.4",
-    "graphql-tools": "^4.0.6",
-    "jest-transform-graphql": "^2.1.0",
-    "rollup-plugin-graphql": "^0.1.0"
   },
   "files": [
     "lib/**/*"

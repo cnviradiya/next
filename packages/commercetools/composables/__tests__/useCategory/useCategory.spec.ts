@@ -21,10 +21,9 @@ jest.mock('@vue-storefront/commercetools-api', () => ({
     }))
 }));
 
-jest.mock('@vue-storefront/factories', () => ({
+jest.mock('@vue-storefront/core', () => ({
   useCategoryFactory: (params) => () => params
 }));
-
 
 describe('[commercetools-composables] useCategory', () => {
   it('loads categories', async () => {
